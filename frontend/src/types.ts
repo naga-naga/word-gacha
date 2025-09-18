@@ -24,3 +24,25 @@ export interface CreateSentenceResponse {
   message: string;
   id: number;
 }
+
+export interface GeneratedStory {
+  id: number;
+  story_text: string;
+  share_token: string;
+  share_url: string;
+  created_at: string;
+  updated_at: string;
+}
+
+export interface SaveStoryResponse {
+  message: string;
+  story: GeneratedStory;
+}
+
+export interface StoriesListResponse {
+  stories: GeneratedStory[];
+}
+
+export interface SharedStoryResponse {
+  story: GeneratedStory;
+}
