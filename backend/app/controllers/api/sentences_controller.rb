@@ -5,7 +5,7 @@ class Api::SentencesController < ApplicationController
     if sentence.save
       render json: { message: "センテンスが投稿されました", id: sentence.id }, status: :created
     else
-      render json: { errors: sentence.errors }, status: :unprocessable_entity
+      render json: { errors: sentence.errors }, status: :unprocessable_content
     end
   end
 

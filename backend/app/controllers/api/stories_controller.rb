@@ -15,7 +15,7 @@ class Api::StoriesController < ApplicationController
         story: story.as_json_with_url
       }, status: :created
     else
-      render json: { errors: story.errors }, status: :unprocessable_entity
+      render json: { errors: story.errors }, status: :unprocessable_content
     end
   end
 
