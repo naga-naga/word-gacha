@@ -13,6 +13,8 @@ class GeneratedStory < ApplicationRecord
   private
 
   def generate_share_token
+    return if share_token.present?
+
     loop do
       self.share_token = SecureRandom.urlsafe_base64(10)
       break unless GeneratedStory.exists?(share_token:)
