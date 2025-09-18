@@ -1,35 +1,74 @@
-import { useState } from 'react'
-import reactLogo from './assets/react.svg'
-import viteLogo from '/vite.svg'
-import './App.css'
+import { useState } from 'react';
+import { SentenceForm } from './components/SentenceForm';
+import { RandomGenerator } from './components/RandomGenerator';
+import { StoryDisplay } from './components/StoryDisplay';
+import { sentenceApi } from './api';
+import type { SentenceElements, Story } from './types';
+import './App.css';
 
 function App() {
-  const [count, setCount] = useState(0)
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [isGenerating, setIsGenerating] = useState(false);
+  const [story, setStory] = useState<Story | null>(null);
+  const [message, setMessage] = useState<string>('');
+
+  const handleSubmitSentence = async (sentence: SentenceElements) => {
+    setIsSubmitting(true);
+    setMessage('');
+
+    try {
+      const response = await sentenceApi.create(sentence);
+      setMessage(response.message);
+    } catch (error) {
+      console.error('センテンス投稿エラー:', error);
+      setMessage('投稿に失敗しました。もう一度お試しください。');
+    } finally {
+      setIsSubmitting(false);
+    }
+  };
+
+  const handleGenerateStory = async () => {
+    setIsGenerating(true);
+    setMessage('');
+
+    try {
+      const response = await sentenceApi.getRandom();
+      setStory(response.story);
+    } catch (error) {
+      console.error('ランダム生成エラー:', error);
+      setMessage('文章生成に失敗しました。もう一度お試しください。');
+    } finally {
+      setIsGenerating(false);
+    }
+  };
 
   return (
-    <>
-      <div>
-        <a href="https://vite.dev" target="_blank">
-          <img src={viteLogo} className="logo" alt="Vite logo" />
-        </a>
-        <a href="https://react.dev" target="_blank">
-          <img src={reactLogo} className="logo react" alt="React logo" />
-        </a>
-      </div>
-      <h1>Vite + React</h1>
-      <div className="card">
-        <button onClick={() => setCount((count) => count + 1)}>
-          count is {count}
-        </button>
-        <p>
-          Edit <code>src/App.tsx</code> and save to test HMR
-        </p>
-      </div>
-      <p className="read-the-docs">
-        Click on the Vite and React logos to learn more
-      </p>
-    </>
-  )
+    <div className="app">
+      <header className="app-header">
+        <h1>ことばガチャ</h1>
+        <p>みんなで文章の要素を投稿して、面白い組み合わせを楽しもう！</p>
+      </header>
+
+      <main className="app-main">
+        <div className="content-grid">
+          <div className="form-section">
+            <SentenceForm onSubmit={handleSubmitSentence} isLoading={isSubmitting} />
+          </div>
+
+          <div className="generator-section">
+            <RandomGenerator onGenerate={handleGenerateStory} isLoading={isGenerating} />
+            <StoryDisplay story={story} />
+          </div>
+        </div>
+
+        {message && (
+          <div className={`message ${message.includes('失敗') ? 'error' : 'success'}`}>
+            {message}
+          </div>
+        )}
+      </main>
+    </div>
+  );
 }
 
-export default App
+export default App;
