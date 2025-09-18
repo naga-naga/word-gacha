@@ -4,6 +4,12 @@ class GeneratedStory < ApplicationRecord
 
   before_validation :generate_share_token, on: :create
 
+  def as_json_with_url
+    as_json.merge(
+      share_url: "http://localhost:5173/shared/#{share_token}"
+    )
+  end
+
   private
 
   def generate_share_token

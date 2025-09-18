@@ -2,6 +2,8 @@ Rails.application.routes.draw do
   namespace :api do
     post "sentences", to: "sentences#create"
     get "sentences/random", to: "sentences#random"
+
+    resources :stories, only: [:index, :create, :show, :destroy], param: :share_token
   end
   # Define your application routes per the DSL in https://guides.rubyonrails.org/routing.html
 
