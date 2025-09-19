@@ -87,15 +87,17 @@ RSpec.describe GeneratedStory, type: :model do
 
       expect(json).to include('id', 'story_text', 'share_token', 'created_at', 'updated_at')
       expect(json).to include(:share_url)
-      expect(json[:share_url]).to eq("http://localhost:5173/shared/#{story.share_token}")
+      frontend_base_url = ENV['FRONTEND_BASE_URL'] || 'http://localhost:5173'
+      expect(json[:share_url]).to eq("#{frontend_base_url}/shared/#{story.share_token}")
     end
 
     it 'share_urlが正しい形式で生成される' do
       json = story.as_json_with_url
-      expected_url = "http://localhost:5173/shared/#{story.share_token}"
+      frontend_base_url = ENV['FRONTEND_BASE_URL'] || 'http://localhost:5173'
+      expected_url = "#{frontend_base_url}/shared/#{story.share_token}"
 
       expect(json[:share_url]).to eq(expected_url)
-      expect(json[:share_url]).to match(%r{^http://localhost:5173/shared/[a-zA-Z0-9_-]{14}$})
+      expect(json[:share_url]).to match(%r{^#{Regexp.escape(frontend_base_url)}/shared/[a-zA-Z0-9_-]{14}$})
     end
 
     it '元のas_jsonの内容を保持する' do

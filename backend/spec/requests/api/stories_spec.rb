@@ -27,9 +27,10 @@ RSpec.describe "Api::Stories", type: :request do
         json_response = JSON.parse(response.body)
         stories = json_response["stories"]
 
+        frontend_base_url = ENV['FRONTEND_BASE_URL'] || 'http://localhost:5173'
         stories.each do |story|
           expect(story).to have_key("share_url")
-          expect(story["share_url"]).to match(%r{^http://localhost:5173/shared/[a-zA-Z0-9_-]{14}$})
+          expect(story["share_url"]).to match(%r{^#{Regexp.escape(frontend_base_url)}/shared/[a-zA-Z0-9_-]{14}$})
         end
       end
     end
@@ -140,7 +141,8 @@ RSpec.describe "Api::Stories", type: :request do
         get "/api/stories/#{story.share_token}"
 
         json_response = JSON.parse(response.body)
-        expected_url = "http://localhost:5173/shared/#{story.share_token}"
+        frontend_base_url = ENV['FRONTEND_BASE_URL'] || 'http://localhost:5173'
+        expected_url = "#{frontend_base_url}/shared/#{story.share_token}"
         expect(json_response["story"]["share_url"]).to eq(expected_url)
       end
     end

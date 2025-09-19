@@ -5,8 +5,9 @@ class GeneratedStory < ApplicationRecord
   before_validation :generate_share_token, on: :create
 
   def as_json_with_url
+    frontend_base_url = ENV['FRONTEND_BASE_URL'] || 'http://localhost:5173'
     as_json.merge(
-      share_url: "http://localhost:5173/shared/#{share_token}"
+      share_url: "#{frontend_base_url}/shared/#{share_token}"
     )
   end
 
