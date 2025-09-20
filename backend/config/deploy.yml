@@ -47,6 +47,9 @@ env:
     # CORS allowed origins for API access
     ALLOWED_ORIGINS: "https://word-gacha.vercel.app"
 
+    # Frontend base URL for shared story links
+    FRONTEND_BASE_URL: "https://word-gacha.vercel.app"
+
     # Set number of processes dedicated to Solid Queue (default: 1)
     # JOB_CONCURRENCY: 3
 
