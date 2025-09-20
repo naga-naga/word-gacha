@@ -7,8 +7,15 @@
 
 Rails.application.config.middleware.insert_before 0, Rack::Cors do
   allow do
-    # 環境変数から許可オリジンを取得（デフォルトは開発環境用）
-    allowed_origins = ENV['ALLOWED_ORIGINS']&.split(',') || ["localhost:5173", "127.0.0.1:5173"]
+    # 環境変数から許可オリジンを取得
+    # 開発環境: localhost、本番環境: Vercelドメイン
+    default_origins = if Rails.env.production?
+      ["https://word-gacha.vercel.app"]
+    else
+      ["localhost:5173", "127.0.0.1:5173"]
+    end
+
+    allowed_origins = ENV['ALLOWED_ORIGINS']&.split(',') || default_origins
     origins allowed_origins
 
     resource "*",

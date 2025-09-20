@@ -1,17 +1,21 @@
 # Name of your application. Used to uniquely configure containers.
-service: backend
+service: word-gacha-backend
 
 # Name of the container image.
-image: your-user/backend
+image: ghcr.io/naga-naga/word-gacha-backend
 
 # Deploy to these servers.
 servers:
   web:
-    - 192.168.0.1
+    - 13.114.201.213
   # job:
   #   hosts:
   #     - 192.168.0.1
   #   cmd: bin/jobs
+
+ssh:
+  user: ec2-user
+  keys: ['~/.ssh/word-gacha-key-pair.pem']
 
 # Enable SSL auto certification via Let's Encrypt and allow for multiple apps on a single web server.
 # Remove this section when using multiple web servers and ensure you terminate SSL at your load balancer.
@@ -19,15 +23,15 @@ servers:
 # Note: If using Cloudflare, set encryption mode in SSL/TLS setting to "Full" to enable CF-to-app encryption.
 proxy:
   ssl: true
-  host: app.example.com
+  host: api.word-gacha.naga-naga.net
 
 # Credentials for your image host.
 registry:
-  # Specify the registry server, if you're not using Docker Hub
-  # server: registry.digitalocean.com / ghcr.io / ...
-  username: your-user
+  # Using GitHub Container Registry
+  server: ghcr.io
+  username: naga-naga
 
-  # Always use an access token rather than real password when possible.
+  # GitHub Personal Access Token with package:write permission
   password:
     - KAMAL_REGISTRY_PASSWORD
 
@@ -39,6 +43,9 @@ env:
     # Run the Solid Queue Supervisor inside the web server's Puma process to do jobs.
     # When you start using multiple servers, you should split out job processing to a dedicated machine.
     SOLID_QUEUE_IN_PUMA: true
+
+    # CORS allowed origins for API access
+    ALLOWED_ORIGINS: "https://word-gacha.vercel.app"
 
     # Set number of processes dedicated to Solid Queue (default: 1)
     # JOB_CONCURRENCY: 3
@@ -71,7 +78,7 @@ volumes:
 # Bridge fingerprinted assets, like JS and CSS, between versions to avoid
 # hitting 404 on in-flight requests. Combines all files from new and old
 # version inside the asset_path.
-asset_path: /rails/public/assets
+# asset_path: /rails/public/assets
 
 # Configure the image builder.
 builder:
@@ -86,10 +93,6 @@ builder:
   # secrets:
   #   - GITHUB_TOKEN
   #   - RAILS_MASTER_KEY
-
-# Use a different ssh user than root
-# ssh:
-#   user: app
 
 # Use accessory services (secrets come from .kamal/secrets).
 # accessories:
